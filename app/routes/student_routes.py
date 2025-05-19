@@ -1,7 +1,8 @@
+# app/routes/student_routes.py
 from flask import Blueprint, render_template
 
-bp = Blueprint('student', __name__, url_prefix='/student')
+student_routes = Blueprint('student', __name__)
 
-@bp.route('/dashboard')
-def dashboard():
+@student_routes.route('/student/dashboard')
+def student_dashboard():
     return render_template('student_dashboard.html')
