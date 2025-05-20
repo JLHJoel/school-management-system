@@ -9,7 +9,7 @@ teacher_bp = Blueprint('teacher', __name__, url_prefix='/maestro')
 @teacher_bp.route('/panel')
 @login_required
 def panel_maestro():
-    estudiantes = Estudiante.query.all()
+    estudiantes = Estudiante.query.filter_by(id_maestro=current_user.id).all()
     return render_template('teacher_dashboard.html', maestro=current_user, estudiantes=estudiantes)
 
 @teacher_bp.route('/add-estudiante', methods=['POST'])
@@ -25,7 +25,17 @@ def add_student():
         return redirect(url_for('teacher.panel_maestro'))
 
     hashed_password = generate_password_hash(password)
-    nuevo_estudiante = Estudiante(nombre=nombre, apellido=apellido, matricula=matricula, password=hashed_password)
+
+    nuevo_estudiante = Estudiante(
+    nombre=nombre,
+    apellido=apellido,
+    matricula=matricula,
+    password=hashed_password,
+    id_maestro=current_user.id  # Asignar maestro actual
+    )
+
+    nuevo_estudiante.set_password(password)
+
     db.session.add(nuevo_estudiante)
     db.session.commit()
     flash('Estudiante agregado exitosamente.', 'success')
@@ -35,11 +45,36 @@ def add_student():
 @login_required
 def edit_student(estudiante_id):
     estudiante = Estudiante.query.get_or_404(estudiante_id)
+    
     estudiante.nombre = request.form.get('nombre')
     estudiante.apellido = request.form.get('apellido')
     estudiante.matricula = request.form.get('matricula')
+        
     if request.form.get('password'):
         estudiante.password = generate_password_hash(request.form.get('password'))
+
+    #valores de asistencia_total y promedio
+    estudiante.asistencia_total = request.form.get('asistencia_total')
+    estudiante.promedio = request.form.get('promedio')
+
+    if estudiante.asistencia_total is not None:
+        try:
+            estudiante.asistencia_total = int(estudiante.asistencia_total)
+        except ValueError:
+            flash('Asistencia total debe ser un número entero.', 'danger')
+            return redirect(url_for('teacher.panel_maestro'))
+
+    if estudiante.promedio is not None:
+        try:
+            prom_float = float(estudiante.promedio)
+            if 0 <= prom_float <= 100:
+                estudiante.promedio = prom_float
+            else:
+                flash('Promedio debe estar entre 0 y 100.', 'danger')
+                return redirect(url_for('teacher.panel_maestro'))
+        except ValueError:
+            flash('Promedio debe ser un número válido.', 'danger')
+            return redirect(url_for('teacher.panel_maestro'))
 
     db.session.commit()
     flash('Datos del estudiante actualizados.', 'success')

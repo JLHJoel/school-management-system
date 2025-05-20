@@ -19,7 +19,7 @@ def login():
         if user and check_password_hash(user.password, password):
             login_user(user)
             flash('Bienvenido maestro', 'success')
-            return redirect(url_for('main.panel_maestro'))
+            return redirect(url_for('teacher.panel_maestro'))
         else:
             flash('Credenciales incorrectas', 'danger')
 

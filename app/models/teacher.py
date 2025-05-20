@@ -12,8 +12,7 @@ class Maestro(db.Model, UserMixin):
     password = db.Column(db.String(255), nullable=False)
     fecha_registro = db.Column(db.DateTime, server_default=db.func.now())
 
-    estudiantes = db.relationship('Estudiante', backref='maestro', lazy=True)
-    materias = db.relationship('Materia', backref='maestro', lazy=True)
+    estudiantes = db.relationship('Estudiante', back_populates='maestro', cascade='all, delete-orphan')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

@@ -5,9 +5,6 @@ from app.database import db
 # Importa los modelos para que se registren al hacer db.create_all()
 from .models.teacher import Maestro
 from .models.student import Estudiante
-from .models.subject import Materia
-from .models.grade import Calificacion
-from .models.attendance import Asistencia
 from .models.teacher import Maestro
 from .models.student import Estudiante
 from flask_login import login_user, logout_user, login_required, current_user

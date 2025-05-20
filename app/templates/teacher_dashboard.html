@@ -4,14 +4,46 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2 class="text-center">Bienvenido, {{ maestro.nombre }} {{ maestro.apellido }}</h2>
-    <p class="text-center">Este es tu panel privado. Aquí pronto podrás gestionar materias, calificaciones y estudiantes.</p>
-</div>
+  <h2 class="text-center">Bienvenido, {{ maestro.nombre }} {{ maestro.apellido }}</h2>
+  <p class="text-center">Este es tu panel privado. Aquí podrás gestionar a tus estudiantes y sus respectivos datos.</p>
 
-<!-- Botón para agregar estudiante -->
+  <!-- Botón para agregar estudiante -->
   <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addStudentModal">
     Agregar Estudiante
   </button>
+
+  <!-- Modal agregar estudiante -->
+  <div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form method="POST" action="{{ url_for('teacher.add_student') }}" class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addStudentLabel">Agregar Estudiante</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label>Nombre</label>
+            <input type="text" name="nombre" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label>Apellido</label>
+            <input type="text" name="apellido" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label>Matrícula</label>
+            <input type="text" name="matricula" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label>Contraseña</label>
+            <input type="password" name="password" class="form-control" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <!-- Tabla de estudiantes -->
   <div class="table-responsive">
@@ -21,8 +53,7 @@
           <th>Nombre</th>
           <th>Apellido</th>
           <th>Matrícula</th>
-          <th>Materias</th>
-          <th>Calificaciones</th>
+          <th>Promedio</th>
           <th>Asistencias</th>
           <th>Acciones</th>
         </tr>
@@ -33,67 +64,82 @@
           <td>{{ estudiante.nombre }}</td>
           <td>{{ estudiante.apellido }}</td>
           <td>{{ estudiante.matricula }}</td>
+          <td>{{ estudiante.promedio | round(2) }}</td>
+          <td>{{ estudiante.asistencia_total }}</td>
           <td>
-            <ul>
-              {% for materia in estudiante.materias %}
-              <li>{{ materia.nombre }}</li>
-              {% endfor %}
-            </ul>
-          </td>
-          <td>
-            <ul>
-              {% for cal in estudiante.calificaciones %}
-              <li>{{ cal.materia }}: {{ cal.valor }}</li>
-              {% endfor %}
-            </ul>
-          </td>
-          <td>
-            <ul>
-              {% for asis in estudiante.asistencias %}
-              <li>{{ asis.fecha }} - {{ 'Presente' if asis.presente else 'Ausente' }}</li>
-              {% endfor %}
-            </ul>
-          </td>
-          <td>
-            <a href="{{ url_for('teacher.edit_student', id=estudiante.id) }}" class="btn btn-sm btn-warning">Editar</a>
+            <!-- Botón para abrir el modal -->
+            <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editStudentModal{{ estudiante.id }}">
+              Editar
+            </button>
+
+            <!-- Modal de edición -->
+            <div class="modal fade" id="editStudentModal{{ estudiante.id }}" tabindex="-1" aria-labelledby="editStudentLabel{{ estudiante.id }}" aria-hidden="true">
+              <div class="modal-dialog">
+                <form method="POST" action="{{ url_for('teacher.edit_student', estudiante_id=estudiante.id) }}" class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="editStudentLabel{{ estudiante.id }}">Editar Estudiante</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                  </div>
+
+                  <!-- Pestañas -->
+                  <ul class="nav nav-tabs" id="editTab{{ estudiante.id }}" role="tablist">
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link active" id="datos-tab{{ estudiante.id }}" data-bs-toggle="tab" data-bs-target="#datos{{ estudiante.id }}" type="button" role="tab" aria-controls="datos{{ estudiante.id }}" aria-selected="true">
+                        Datos del Estudiante
+                      </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="info-tab{{ estudiante.id }}" data-bs-toggle="tab" data-bs-target="#info{{ estudiante.id }}" type="button" role="tab" aria-controls="info{{ estudiante.id }}" aria-selected="false">
+                        Información Adicional
+                      </button>
+                    </li>
+                  </ul>
+
+                  <div class="tab-content p-3">
+                    <!-- Tab 1: Datos del estudiante -->
+                    <div class="tab-pane fade show active" id="datos{{ estudiante.id }}" role="tabpanel">
+                      <div class="mb-3">
+                        <label>Nombre</label>
+                        <input type="text" name="nombre" class="form-control" value="{{ estudiante.nombre }}" required>
+                      </div>
+                      <div class="mb-3">
+                        <label>Apellido</label>
+                        <input type="text" name="apellido" class="form-control" value="{{ estudiante.apellido }}" required>
+                      </div>
+                      <div class="mb-3">
+                        <label>Matrícula</label>
+                        <input type="text" name="matricula" class="form-control" value="{{ estudiante.matricula }}" required>
+                      </div>
+                      <div class="mb-3">
+                        <label>Nueva contraseña (opcional)</label>
+                        <input type="password" name="password" class="form-control">
+                      </div>
+                    </div>
+
+                    <!-- Tab 2: Info adicional -->
+                    <div class="tab-pane fade" id="info{{ estudiante.id }}" role="tabpanel">
+                      <div class="mb-3">
+                        <label>Asistencias Totales</label>
+                        <input type="number" name="asistencia_total" class="form-control" value="{{ estudiante.asistencia_total or 0 }}">
+                      </div>
+                      <div class="mb-3">
+                        <label>Promedio (0 - 100)</label>
+                        <input type="number" name="promedio" class="form-control" step="0.01" min="0" max="100" value="{{ estudiante.promedio or 0.00 }}">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                  </div>
+                </form>
+              </div>
+            </div>
           </td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
-  </div>
-</div>
-
-<!-- Modal agregar estudiante -->
-<div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <form method="POST" action="{{ url_for('teacher.add_student') }}" class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="addStudentLabel">Agregar Estudiante</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body">
-        <div class="mb-3">
-          <label>Nombre</label>
-          <input type="text" name="nombre" class="form-control" required>
-        </div>
-        <div class="mb-3">
-          <label>Apellido</label>
-          <input type="text" name="apellido" class="form-control" required>
-        </div>
-        <div class="mb-3">
-          <label>Matrícula</label>
-          <input type="text" name="matricula" class="form-control" required>
-        </div>
-        <div class="mb-3">
-          <label>Contraseña</label>
-          <input type="password" name="password" class="form-control" required>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="submit" class="btn btn-success">Guardar</button>
-      </div>
-    </form>
   </div>
 </div>
 {% endblock %}

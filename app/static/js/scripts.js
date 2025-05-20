@@ -1,18 +1,16 @@
-// Wait for DOM to be fully loaded
+// DOM
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize tooltips
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.map(function(tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
-    // Initialize popovers
     var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
     popoverTriggerList.map(function(popoverTriggerEl) {
         return new bootstrap.Popover(popoverTriggerEl);
     });
     
-    // Password visibility toggle
+    // Visibilidad de contraseñas
     const togglePasswordButtons = document.querySelectorAll('.toggle-password');
     togglePasswordButtons.forEach(button => {
         button.addEventListener('click', function() {
@@ -27,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Auto-hide flash messages after 5 seconds
+    // Esconder mensajes Flash
     const flashMessages = document.querySelectorAll('.alert');
     flashMessages.forEach(message => {
         setTimeout(() => {
@@ -36,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 5000);
     });
     
-    // Form validation
+    // Validacion de form
     const forms = document.querySelectorAll('.needs-validation');
     Array.from(forms).forEach(form => {
         form.addEventListener('submit', event => {
