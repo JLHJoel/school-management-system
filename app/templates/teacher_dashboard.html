@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Panel Maestro{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Bienvenido, {{ maestro.nombre }} {{ maestro.apellido }}</h2>
+    <p class="text-center">Este es tu panel privado. Aquí pronto podrás gestionar materias, calificaciones y estudiantes.</p>
+</div>
+
+<!-- Botón para agregar estudiante -->
+  <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+    Agregar Estudiante
+  </button>
+
+  <!-- Tabla de estudiantes -->
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th>Nombre</th>
+          <th>Apellido</th>
+          <th>Matrícula</th>
+          <th>Materias</th>
+          <th>Calificaciones</th>
+          <th>Asistencias</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for estudiante in estudiantes %}
+        <tr>
+          <td>{{ estudiante.nombre }}</td>
+          <td>{{ estudiante.apellido }}</td>
+          <td>{{ estudiante.matricula }}</td>
+          <td>
+            <ul>
+              {% for materia in estudiante.materias %}
+              <li>{{ materia.nombre }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+          <td>
+            <ul>
+              {% for cal in estudiante.calificaciones %}
+              <li>{{ cal.materia }}: {{ cal.valor }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+          <td>
+            <ul>
+              {% for asis in estudiante.asistencias %}
+              <li>{{ asis.fecha }} - {{ 'Presente' if asis.presente else 'Ausente' }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+          <td>
+            <a href="{{ url_for('teacher.edit_student', id=estudiante.id) }}" class="btn btn-sm btn-warning">Editar</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal agregar estudiante -->
+<div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form method="POST" action="{{ url_for('teacher.add_student') }}" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addStudentLabel">Agregar Estudiante</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label>Nombre</label>
+          <input type="text" name="nombre" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label>Apellido</label>
+          <input type="text" name="apellido" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label>Matrícula</label>
+          <input type="text" name="matricula" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label>Contraseña</label>
+          <input type="password" name="password" class="form-control" required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-success">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block additional_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}

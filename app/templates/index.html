@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="hero-section position-relative">
-    <!-- College Building Background Image -->
+    <!-- Imagen estática de fondo -->
     <div class="college-bg">
         <img src="{{ url_for('static', filename='img/college-building.jpg') }}" alt="College Building" class="w-100">
         <div class="overlay"></div>
@@ -15,7 +15,7 @@
             <div class="col-lg-8">
                 <div class="hero-content text-white text-center text-lg-start py-5">
                     <h1 class="display-2 fw-bold mb-4"><br>THE BEST COLLEGE<br>MANAGEMENT SYSTEM</h1>
-                    <a href="#" class="btn btn-success btn-lg px-5 py-3">Get Started</a>
+                    <a class="btn btn-success btn-lg px-5 py-3 me-3" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Get Started</a>
                 </div>
             </div>
             <div class="col-lg-4 d-none d-lg-block">
@@ -27,6 +27,69 @@
     </div>
 </div>
 
+<!-- Modal de login con pestañas -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content p-3">
+      <div class="modal-header">
+        <h5 class="modal-title">Iniciar sesión</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs mb-3" id="loginTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="maestro-tab" data-bs-toggle="tab" data-bs-target="#maestro" type="button" role="tab" aria-controls="maestro" aria-selected="true">Maestro</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="estudiante-tab" data-bs-toggle="tab" data-bs-target="#estudiante" type="button" role="tab" aria-controls="estudiante" aria-selected="false">Estudiante</button>
+          </li>
+        </ul>
+
+        <!-- Ventanas -->
+        <div class="tab-content" id="loginTabContent">
+
+          <!-- Formulario Maestro -->
+          <div class="tab-pane fade show active" id="maestro" role="tabpanel" aria-labelledby="maestro-tab">
+            <form method="POST" action="{{ url_for('auth.login') }}">
+              <input type="hidden" name="user_type" value="maestro">
+              <div class="mb-3">
+                <label for="correoMaestro" class="form-label">Correo</label>
+                <input type="email" class="form-control" id="correoMaestro" name="correo" required>
+              </div>
+              <div class="mb-3">
+                <label for="passwordMaestro" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="passwordMaestro" name="password" required>
+              </div>
+              <button type="submit" class="btn btn-success w-100">Ingresar como Maestro</button>
+            </form>
+          </div>
+
+          <!-- Formulario Estudiante -->
+          <div class="tab-pane fade" id="estudiante" role="tabpanel" aria-labelledby="estudiante-tab">
+            <form method="POST" action="{{ url_for('auth.login') }}">
+              <input type="hidden" name="user_type" value="estudiante">
+              <div class="mb-3">
+                <label for="matriculaEstudiante" class="form-label">Matrícula</label>
+                <input type="text" class="form-control" id="matriculaEstudiante" name="matricula" required>
+              </div>
+              <div class="mb-3">
+                <label for="passwordEstudiante" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="passwordEstudiante" name="password" required>
+              </div>
+              <button type="submit" class="btn btn-success w-100">Ingresar como Estudiante</button>
+            </form>
+          </div>
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a href="{{ url_for('auth.register_maestro') }}">¿Eres maestro? Regístrate aquí</a>
+      </div>
+    </div>
+  </div>
+</div>
 
 {% endblock %}
 
@@ -40,15 +103,15 @@
     }
     
     .college-bg {
-    position: fixed; 
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    margin: 0; 
-    padding: 0; 
-}
+        position: fixed; 
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        margin: 0; 
+        padding: 0; 
+    }
     
     .college-bg img {
         width: 100%;
@@ -66,13 +129,13 @@
     }
     
     .hero-content {
-    padding-top: 15vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;  
-    align-items: center;     
-    text-align: center;       
-    height: 70vh;             
+        padding-top: 15vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;  
+        align-items: center;     
+        text-align: center;       
+        height: 70vh;             
     }
 
     .display-2{
@@ -103,4 +166,13 @@
         }
     }
 </style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

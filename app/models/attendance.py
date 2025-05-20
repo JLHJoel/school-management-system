@@ -1,10 +1,10 @@
 from app.database import db
 
-class Calificacion(db.Model):
-    __tablename__ = 'calificaciones'
+class Asistencia(db.Model):
+    __tablename__ = 'asistencias'
 
     id = db.Column(db.Integer, primary_key=True)
     id_estudiante = db.Column(db.Integer, db.ForeignKey('estudiantes.id'), nullable=False)
     id_materia = db.Column(db.Integer, db.ForeignKey('materias.id'), nullable=False)
-    calificacion = db.Column(db.Numeric(5, 2), nullable=False)
-    fecha_registro = db.Column(db.Date, server_default=db.func.current_date())
+    fecha = db.Column(db.Date, nullable=False)
+    presente = db.Column(db.Boolean, default=False)
